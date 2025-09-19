@@ -1,0 +1,7 @@
+**/target/
+**/build/
+**/out
+/postgres
+/ollama
+/.idea
+/.gigaide
