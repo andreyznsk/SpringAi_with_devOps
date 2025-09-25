@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 services:
   postgres:
     image: ankane/pgvector:v0.5.0
@@ -32,20 +32,28 @@ services:
       - ./servers.json:/pgadmin4/servers.json
     ports:
       - "${PGADMIN_PORT:-5050}:80"
-
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:rocm
     container_name: ollama
     ports:
       - "11431:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+              count: all
     volumes:
       - ./ollama:/root/.ollama
-    entrypoint: >
-      /bin/sh -c "
-        ollama serve &
-        sleep 2 &&
-        ollama pull gemma3:4b-it-q4_K_M &&
-        ollama pull mxbai-embed-large &&
-        wait
-      "
-    restart: unless-stopped
+#  ollama:
+#    image: dustynv/ollama:r36.4-cu129-24.04
+#    container_name: ollama
+#    runtime: nvidia
+#    ports:
+#      - "11431:11434"
+#    volumes:
+#      - ./ollama:/ollama
+#    environment:
+#      - OLLAMA_MODELS=/ollama
+#    restart: unless-stopped

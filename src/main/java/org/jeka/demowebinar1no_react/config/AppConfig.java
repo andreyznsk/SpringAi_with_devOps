@@ -1,17 +1,19 @@
 package org.jeka.demowebinar1no_react.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jeka.demowebinar1no_react.advisors.ExpansionQueryAdvisor;
+import org.jeka.demowebinar1no_react.advisors.RagAdvisor;
 import org.jeka.demowebinar1no_react.repo.ChatRepository;
 import org.jeka.demowebinar1no_react.services.PostgresChatMemory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,18 +21,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 public class AppConfig {
 
-    private static final PromptTemplate MY_PROMPT_TEMPLATE = new PromptTemplate(
+    private static final PromptTemplate SYSTEM_PROMPT_TEMPLATE = new PromptTemplate(
             """
-                    {query}
-                    Контекст:
-                    ---------------------
-                    {question_answer_context}
-                    ---------------------
-                    Отвечай только на основе контекста выше. Если информации нет в контексте, сообщи, что не можешь ответить."""
+            Ты Зайцев Андрей, Java разработчик, работаешь в СБЕР, отвечай от первого лица кратко и по делу.
+            
+            Вопрос может быть о следствии факта из CONTEXT.
+            Всегда связывай факт контекст -> вопрос
+            
+            нет связи, даже косвенной = отвечай на основе общей информации".
+            Есть связь = отвечай
+           
+            """
     );
+
+    private final ChatModel chatModel;
 
 
     @Autowired
@@ -46,16 +54,18 @@ public class AppConfig {
         log.info("Starting chatClient with RAG");
         return builder
                 .defaultAdvisors(
-                        getHistoryAdvisor(),
-                        SimpleLoggerAdvisor.builder().build(),
-                        getRagAdviser(),
-                        SimpleLoggerAdvisor.builder().build())
+                        ExpansionQueryAdvisor.builder(chatModel).order(0).build(),
+                        getHistoryAdvisor(1, 10),
+//                        SimpleLoggerAdvisor.builder().order(2).build(),
+                        RagAdvisor.builder(vectorStore).order(3).build(),
+                        SimpleLoggerAdvisor.builder().order(4).build())
                 .defaultOptions(OllamaOptions.builder()
                         .temperature(0.3)
                         .topP(0.7)
                         .topK(20)
                         .repeatPenalty(1.1)
                         .build())
+                .defaultSystem(SYSTEM_PROMPT_TEMPLATE.render())
                 .build();
     }
 
@@ -67,24 +77,17 @@ public class AppConfig {
         return builder
                 .defaultAdvisors(
                         SimpleLoggerAdvisor.builder().build(),
-                        getHistoryAdvisor())
+                        getHistoryAdvisor(1, 10))
                 .build();
     }
 
-    private Advisor getRagAdviser() {
-        return QuestionAnswerAdvisor.builder(vectorStore).promptTemplate(MY_PROMPT_TEMPLATE).searchRequest(
-                SearchRequest.builder().topK(4).similarityThreshold(0.65).build()
-        ).build();
+    private Advisor getHistoryAdvisor(int order, int maxMessages) {
+        return MessageChatMemoryAdvisor.builder(getChatMemory(maxMessages)).order(order).build();
     }
 
-
-    private Advisor getHistoryAdvisor() {
-        return MessageChatMemoryAdvisor.builder(getChatMemory()).order(-10).build();
-    }
-
-    private ChatMemory getChatMemory() {
+    private ChatMemory getChatMemory(int maxMessages) {
         return PostgresChatMemory.builder()
-                .maxMessages(12)
+                .maxMessages(maxMessages)
                 .chatMemoryRepository(chatRepository)
                 .build();
     }
