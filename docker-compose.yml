@@ -33,19 +33,21 @@ services:
     ports:
       - "${PGADMIN_PORT:-5050}:80"
   ollama:
-    image: ollama/ollama:rocm
+    image: ollama/ollama
     container_name: ollama
     ports:
       - "11431:11434"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              capabilities: ["gpu"]
-              count: all
     volumes:
       - ./ollama:/root/.ollama
+    entrypoint: >
+      /bin/sh -c "
+        ollama serve &
+        sleep 2 &&
+        ollama pull gemma3:4b-it-q4_K_M &&
+        ollama pull mxbai-embed-large &&
+        wait
+      "
+    restart: unless-stopped
 #  ollama:
 #    image: dustynv/ollama:r36.4-cu129-24.04
 #    container_name: ollama
