@@ -16,22 +16,11 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
-      - ./postgres/scripts:/docker-entrypoint-initdb.d
     healthcheck:
       test: "pg_isready -U postgres -d ragdb"
       interval: 2s
       timeout: 20s
       retries: 10
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-    volumes:
-      - ./servers.json:/pgadmin4/servers.json
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
   ollama:
     image: ollama/ollama
     container_name: ollama
@@ -48,14 +37,3 @@ services:
         wait
       "
     restart: unless-stopped
-#  ollama:
-#    image: dustynv/ollama:r36.4-cu129-24.04
-#    container_name: ollama
-#    runtime: nvidia
-#    ports:
-#      - "11431:11434"
-#    volumes:
-#      - ./ollama:/ollama
-#    environment:
-#      - OLLAMA_MODELS=/ollama
-#    restart: unless-stopped

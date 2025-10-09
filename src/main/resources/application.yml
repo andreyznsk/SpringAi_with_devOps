@@ -1,0 +1,34 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    open-in-view: 'false'
+  main:
+    allow-circular-references: 'true'
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/ragdb
+    password: postgres
+  ai:
+    ollama:
+      chat:
+        model: gemma3:4b-it-q4_K_M
+      base-url: http://localhost:11431
+  application:
+    name: And-demo
+  flyway:
+    baseline-description: true
+    baseline-on-migrate: true
+    create-schemas: true
+    default-schema: public
+    enabled: true
+    locations: filesystem:./sql/migrations
+    schemas: public
+    url: jdbc:postgresql://localhost:5432/ragdb
+    user: postgres
+    password: postgres
+    validate-on-migrate: true
+
+use:
+  rag: 'true'

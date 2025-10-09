@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="spring_output_ansi_enabled" value="ALWAYS" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="org.and.demo.Main" />
+    <module name="borisov-gpt" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.and.demo.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
