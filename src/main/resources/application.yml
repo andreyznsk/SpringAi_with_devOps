@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${PORT:8080}
 
 spring:
   jpa:
@@ -8,13 +8,13 @@ spring:
     allow-circular-references: 'true'
   datasource:
     username: postgres
-    url: jdbc:postgresql://localhost:5432/ragdb
+    url: jdbc:postgresql://${DB_URL}/ragdb
     password: postgres
   ai:
     ollama:
       chat:
         model: gemma3:4b-it-q4_K_M
-      base-url: http://localhost:11431
+      base-url: ${AI_URL}
   application:
     name: And-demo
   flyway:
@@ -25,7 +25,7 @@ spring:
     enabled: true
     locations: filesystem:./sql/migrations
     schemas: public
-    url: jdbc:postgresql://localhost:5432/ragdb
+    url: jdbc:postgresql://${DB_URL}/ragdb
     user: postgres
     password: postgres
     validate-on-migrate: true

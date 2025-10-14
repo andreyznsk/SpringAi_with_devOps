@@ -1,10 +1,13 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
     <envs>
+      <env name="AI_URL" value="http://localhost:11431" />
+      <env name="DB_URL" value="localhost:5432" />
       <env name="spring_output_ansi_enabled" value="ALWAYS" />
+      <env name="PORT" value="8081" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="org.and.demo.Main" />
-    <module name="borisov-gpt" />
+    <module name="andreyz-llm" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.and.demo.*" />
