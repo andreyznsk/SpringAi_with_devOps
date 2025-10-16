@@ -5,18 +5,34 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                sh "chmod +x startTestDb.sh"
+                sh "chmod +x stopTestDb.sh"
+                try {
+                    sh "./startTestDb.sh"
+                    sh "mvn clean package -T 1C -ntp -U"
+                } catch (Exception e) {
+                    println e
+                } finally {
+                    sh './stopTestDb.sh'
+                }
             }
         }
-        stage('Test') {
+        stage('SQ') {
             steps {
-                echo 'Testing..'
+                echo 'Send result to SQ'
             }
         }
-        stage('Deploy') {
+        stage('Docker build') {
             steps {
                 echo 'Deploying....'
             }
         }
+
+        stage('Docker upload') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+
     }
 }
