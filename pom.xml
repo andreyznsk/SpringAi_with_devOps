@@ -8,28 +8,18 @@
         <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.jeka</groupId>
-    <artifactId>borisov-gpt</artifactId>
+    <groupId>org.and</groupId>
+    <artifactId>andreyz-llm</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>borisov-gpt</name>
-    <description>spring_ai_and_rag</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+    <name>andreyz-llm</name>
+
     <properties>
         <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <spring-ai.version>1.0.0</spring-ai.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -60,6 +50,14 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-advisors-vector-store</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.pemistahl</groupId>
@@ -101,11 +99,12 @@
     </dependencyManagement>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

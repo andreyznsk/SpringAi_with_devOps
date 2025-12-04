@@ -1,0 +1,10 @@
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Novosibirsk
+ENV spring_output_ansi_enabled=ALWAYS
+COPY target/app.jar /app/app.jar
+COPY sql/migrations /app/sql/migrations
+WORKDIR /app
+ENTRYPOINT ["sh", "-c", "java $JVM_OPTIONS -jar app.jar"]

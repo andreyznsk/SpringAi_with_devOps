@@ -1,0 +1,23 @@
+server:
+  port: 8888
+spring:
+  jpa:
+    open-in-view: 'false'
+  main:
+    allow-circular-references: 'true'
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5444/ragdb
+    password: postgres
+  flyway:
+    baseline-description: true
+    baseline-on-migrate: true
+    create-schemas: true
+    default-schema: public
+    enabled: true
+    locations: filesystem:./sql/migrations
+    schemas: public
+    url: jdbc:postgresql://localhost:5444/ragdb
+    user: postgres
+    password: postgres
+    validate-on-migrate: true
